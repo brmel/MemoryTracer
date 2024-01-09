@@ -21,6 +21,7 @@ This project is inspired from https://james-ross.co.uk/projects/vmmap. And has b
 - Fixing unused regions memory counter.
 - Reducing memory allocation when taking a snapshot (ideally we should reserve memory at the beginning and not allocate memory when taking snapshots).
 - Exporting data to csv file.
+- Controling the snapshot start time and frequency. 
 - Formating code to be more readable and maintainable.  
   
 If you have any feedback about the application, you can submit a new issue here : https://github.com/brmel/MemoryTracerLib/issues
