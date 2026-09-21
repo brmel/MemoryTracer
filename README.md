@@ -17,6 +17,24 @@ I wrote up what I learned building it, in two parts on LinkedIn:
 
 Both are also on [ibraverse.ca/tech](https://ibraverse.ca/tech/).
 
+## What it shows
+
+![Virtual memory broken down by type over the life of a process — image, mapped file, heap, stack and private data as separate bands](docs/images/virtual-by-type.jpg)
+
+*Virtual memory by type, across a process's life. Each band is a kind of memory, so a leak shows up as the band that never comes back down.*
+
+![The same process as a timeline, with committed memory climbing and levelling off](docs/images/virtual-timeline.jpg)
+
+*The same run as a timeline. A single number in Task Manager cannot show you this.*
+
+![Private bytes plotted over time](docs/images/private-bytes.jpg)
+
+*Private bytes — the counter that actually answers "is this process leaking?".*
+
+![MemoryTracer's totals next to VMMap's, matching column for column](docs/images/tracer-vs-vmmap.jpg)
+
+*Checked against Sysinternals VMMap, column for column. A measurement tool that has not been compared to a known-good one is just a number generator.*
+
 ## Use it
 
 ```cpp
