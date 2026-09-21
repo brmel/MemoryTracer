@@ -1,27 +1,66 @@
-# MemoryTracerLib
-  
-MemoryTracerLib is a C++ static library designed to assist you in monitoring the Virtual Memory usage of a specific process over time. It allows you to display data on the screen, export well-formatted data to a file, and provides control over the snapshot frequency. <br />
-You can integrate it into your code, utilizing it as a callback function to precisely control when to take a snapshot. Alternatively, you can employ it in another process if you prefer not to modify the code of the process you wish to track.  <br />
-  
-Example : <br />
-```
+# MemoryTracer
+
+## The goal
+
+MemoryTracer answers one question: where is a Windows process's virtual memory
+actually going? It is a small C++ static library that takes snapshots of a live
+process — committed, reserved, private, working set, broken down by heap, stack,
+image and mapped file — on a schedule you control, and exports them to CSV so you
+can watch memory move over time instead of guessing from a single number in Task
+Manager. You can link it into your own process and snapshot exactly when it
+matters, or point it at another process by PID and leave that one untouched.
+
+I wrote up what I learned building it, in two parts on LinkedIn:
+
+- [A very shallow overview of Windows memory management](https://www.linkedin.com/pulse/very-shallow-overview-windows-memory-management-mellah-thzse) — virtual vs. physical, and how to measure either one honestly
+- [Delving deep into Windows memory management](https://www.linkedin.com/pulse/delving-deep-windows-memory-management-brahim-redouane-mellah--uzaee) — private data, stack, heap, mapped files and images, with `VirtualAlloc`, file-mapping and `std::vector` worked through
+
+Both are also on [ibraverse.ca/tech](https://ibraverse.ca/tech/).
+
+## Use it
+
+```cpp
 #include "snapshotmngr.h"
+
 int _tmain(int argc, _TCHAR* argv[])
    {
    Z_UINT32 ProcessPid = 30004;
    CSnapshotMngr MyMemTracer(ProcessPid);
-   MyMemTracer.PrintNow();
+
+   MyMemTracer.PrintNow();              // one snapshot to stdout
+   MyMemTracer.ExportNow();             // one snapshot to CSV
+   MyMemTracer.Export(120, 2);          // every 2s for 120s, to CSV
+
    return 0;
    }
 ```
-  
-This project is inspired from https://james-ross.co.uk/projects/vmmap. And has been improved by:  
-- Adding private-Byte memory usage counter.
-- Fixing process memory max limit for 64-bit processes.
-- Fixing unused regions memory counter.
-- Reducing memory allocation when taking a snapshot (ideally we should reserve memory at the beginning and not allocate memory when taking snapshots).
-- Exporting data to csv file.
-- Controling the snapshot start time and frequency. 
-- Formating code to be more readable and maintainable.  
-  
-If you have any feedback about the application, you can submit a new issue here : https://github.com/brmel/MemoryTracerLib/issues
+
+`PrintNow(Level)` controls how much detail reaches the console — level 3 breaks
+each region down by type.
+
+## Build
+
+Windows only; it calls `VirtualQuery`, `Heap32ListFirst` and the Tool Help API
+directly.
+
+1. Open `MemoryTracerLib.sln` in Visual Studio 2022 (toolset v143).
+2. Build the `MemoryTracerLib` project — it produces a static library.
+3. Link the `.lib` into your program and add `include/` to your include path.
+
+## Where it came from
+
+Built on the approach in [james-ross.co.uk/projects/vmmap](https://james-ross.co.uk/projects/vmmap),
+with these changes:
+
+- a private-bytes counter, which the original did not report
+- a corrected process memory maximum for 64-bit processes
+- a corrected unused-region counter
+- fewer allocations while a snapshot is being taken (the tracer should not move
+  the number it is measuring)
+- CSV export
+- control over when snapshots start and how often they repeat
+
+## Licence and issues
+
+Apache-2.0 — see [LICENSE](LICENSE). Found something wrong, or want a counter
+that is not there? [Open an issue](https://github.com/brmel/MemoryTracer/issues).
