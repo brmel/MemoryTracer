@@ -19,21 +19,25 @@ Both are also on [ibraverse.ca/tech](https://ibraverse.ca/tech/).
 
 ## What it shows
 
-![Virtual memory broken down by type over the life of a process — image, mapped file, heap, stack and private data as separate bands](docs/images/virtual-by-type.jpg)
+MemoryTracer writes three CSV files per run — `<pid>_MemType.csv`,
+`<pid>_MemState.csv` and `<pid>_PrivateByte.csv`. These charts are plotted from
+those exports; the library itself writes the numbers, not the pictures.
 
-*Virtual memory by type, across a process's life. Each band is a kind of memory, so a leak shows up as the band that never comes back down.*
+![Virtual memory by type over a process's life: image, mapped file, heap, stack and private data as separate bands](docs/images/virtual-by-type.jpg)
 
-![The same process as a timeline, with committed memory climbing and levelling off](docs/images/virtual-timeline.jpg)
+*From `<pid>_MemType.csv` — virtual memory split by type. A leak shows up as the band that never comes back down.*
 
-*The same run as a timeline. A single number in Task Manager cannot show you this.*
+![The same run as a timeline, committed memory climbing and levelling off](docs/images/virtual-timeline.jpg)
+
+*The same export over time. One number in Task Manager cannot show you this.*
 
 ![Private bytes plotted over time](docs/images/private-bytes.jpg)
 
-*Private bytes — the counter that actually answers "is this process leaking?".*
+*From `<pid>_PrivateByte.csv` — the counter that answers "is this process leaking?".*
 
-![MemoryTracer's totals next to VMMap's, matching column for column](docs/images/tracer-vs-vmmap.jpg)
+![MemoryTracer's console output beside a VMMap snapshot, the figures matching column for column](docs/images/tracer-vs-vmmap.jpg)
 
-*Checked against Sysinternals VMMap, column for column. A measurement tool that has not been compared to a known-good one is just a number generator.*
+*MemoryTracer's own output next to Sysinternals VMMap. A measurement tool that has never been compared against a known-good one is just a number generator.*
 
 ## Use it
 
